@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.LootLearn" parent="android:Theme.Material.Light.NoActionBar" >
+
+
+        <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
+        
+    </style>
+
+    <style name="Theme.LootLearn.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+</resources>
