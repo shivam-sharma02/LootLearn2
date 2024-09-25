@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -47,6 +49,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    kapt{
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -73,6 +78,21 @@ dependencies {
     implementation (libs.ui)
     implementation (libs.ui.tooling)
     implementation (libs.material)
+    implementation("com.google.accompanist:accompanist-drawablepainter:0.35.0-alpha")
 
+    implementation ("io.coil-kt:coil-compose:2.1.0")
+    implementation ("io.coil-kt:coil-gif:2.1.0")
+
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+    implementation ("com.jakewharton.timber:timber:4.7.1")
+
+    implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation ("androidx.navigation:navigation-compose:2.4.0-alpha01")
+
+    implementation ("androidx.compose.material3:material3:1.0.0") // For material design 3 components
+    implementation ("androidx.compose.material:material:1.5.0")
 
 }

@@ -137,9 +137,9 @@ fun StandardTextField(
                         ) {
                             Icon(
                                 imageVector = if (isPasswordVisible) {
-                                    Icons.Filled.VisibilityOff
-                                } else {
                                     Icons.Filled.Visibility
+                                } else {
+                                    Icons.Filled.VisibilityOff
                                 },
                                 tint = textGray,
                                 contentDescription = if (isPasswordVisible) {

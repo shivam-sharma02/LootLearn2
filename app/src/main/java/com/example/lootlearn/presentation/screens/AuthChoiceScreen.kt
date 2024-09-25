@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import com.example.lootlearn.presentation.components.StandardSocialAuthButton
 import com.example.lootlearn.presentation.ui.theme.AuthScreenPurpleText
 import com.example.lootlearn.presentation.ui.theme.FacebookBackgroundColor
 import com.example.lootlearn.presentation.ui.theme.GoogleTextContentColor
+import com.example.lootlearn.utils.Screen
 import com.example.lootlearn.utils.annotatedLoginSignupString
 import com.example.lootlearn.utils.annotatedPrivacyPolicyString
 
@@ -57,19 +59,35 @@ fun AuthChoiceScreen(
 
             Image(imageVector = ImageVector.vectorResource(id = R.drawable.authheadertextimage), contentDescription = "auth page header text")
 
-            Text(text = annotatedLoginSignupString(signupOrLogin))
+//            Text(text = annotatedLoginSignupString(signupOrLogin, onTextClick = {
+//                navController.navigate(Screen.LogInScreen.route)
+//            }))
+
+            ClickableText(
+                text = annotatedLoginSignupString(signupOrLogin),
+                onClick = {
+                        offset -> annotatedLoginSignupString(signupOrLogin).getStringAnnotations(
+                    tag = "navigate",
+                    start = offset,
+                    end = offset
+                ).firstOrNull()?.let {
+                        navController.navigate(Screen.LogInScreen.route)
+                }
+                }
+            )
 
             Spacer(modifier = Modifier.height(87.5.dp))
 
-            StandardSocialAuthButton(logo = painterResource(id = R.drawable.googlelogo), text = "Continue with Google", backgroundColor = Color.White , textColor = GoogleTextContentColor)
+            StandardSocialAuthButton(logo = painterResource(id = R.drawable.googlelogo), text = "Continue with Google", backgroundColor = Color.White , textColor = GoogleTextContentColor){
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            StandardSocialAuthButton(logo = painterResource(id = R.drawable.facebooklogo), text = "Continue with Facebook", backgroundColor = FacebookBackgroundColor,textColor = Color.White )
+            StandardSocialAuthButton(logo = painterResource(id = R.drawable.facebooklogo), text = "Continue with Facebook", backgroundColor = FacebookBackgroundColor,textColor = Color.White ){}
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            StandardSocialAuthButton(logo = painterResource(id = R.drawable.applelogo), text = "Continue with Apple", backgroundColor = Color.Black,textColor = Color.White )
+            StandardSocialAuthButton(logo = painterResource(id = R.drawable.applelogo), text = "Continue with Apple", backgroundColor = Color.Black,textColor = Color.White){}
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -77,9 +95,13 @@ fun AuthChoiceScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            StandardSocialAuthButton(logo = painterResource(id = R.drawable.emailicon), text = "Continue with Email", backgroundColor = Color.White,textColor = AuthScreenPurpleText )
+            StandardSocialAuthButton(logo = painterResource(id = R.drawable.emailicon), text = "Continue with Email", backgroundColor = Color.White,textColor = AuthScreenPurpleText) {
+                navController.navigate(
+                    Screen.SignUpScreen.route
+                )
+            }
 
-            Spacer(modifier = Modifier.height(81.5.dp))
+            Spacer(modifier = Modifier.height(51.5.dp))
 
             Text(text = annotatedPrivacyPolicyString(), modifier = Modifier
                 .width(315.dp)

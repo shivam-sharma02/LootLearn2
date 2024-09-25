@@ -36,8 +36,8 @@ fun StandardSocialAuthButton(
     logo : Painter,
     text : String,
     backgroundColor : Color,
-    textColor : Color
-//    onCLick : () -> Unit
+    textColor : Color,
+    onCLick : () -> Unit
 ){
     Box(
         modifier = Modifier
@@ -47,8 +47,8 @@ fun StandardSocialAuthButton(
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .background(backgroundColor)
-            .padding(13.dp),
-//            .clickable( onClick = onCLick),
+            .padding(13.dp)
+            .clickable( onClick = onCLick),
         Alignment.Center
     ){
         Row(
@@ -67,5 +67,5 @@ fun StandardSocialAuthButton(
 @Preview
 @Composable
 fun SocialButtonPreview(){
-    StandardSocialAuthButton(logo = painterResource(id = R.drawable.facebooklogo) , text = "Continue with Facebook", backgroundColor = FacebookBackgroundColor, textColor = Color.White)
+//    StandardSocialAuthButton(logo = painterResource(id = R.drawable.facebooklogo) , text = "Continue with Facebook", backgroundColor = FacebookBackgroundColor, textColor = Color.White)
 }
