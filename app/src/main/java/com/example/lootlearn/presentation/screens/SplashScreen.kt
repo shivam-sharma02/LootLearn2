@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
@@ -22,6 +24,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.lootlearn.R
+import com.example.lootlearn.presentation.screens.authchoice.googlesignin.SignInViewModel
 import com.example.lootlearn.presentation.ui.theme.GradientColors
 import com.example.lootlearn.utils.Screen
 import com.example.lootlearn.utils.gradientBrush
@@ -32,6 +35,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     navController: NavController
 ) {
+
 
     Box(
         modifier = Modifier
@@ -81,9 +85,10 @@ fun SplashScreen(
             LaunchedEffect(key1 = true){
 
                 delay(2200)
-                navController.popBackStack()
-                navController.navigate(Screen.AuthChoiceScreen.route)
-                
+
+                    navController.popBackStack()
+                    navController.navigate(Screen.AuthChoiceScreen.route)
+
             }
 
         }

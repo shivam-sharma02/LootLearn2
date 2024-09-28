@@ -14,7 +14,7 @@ import com.example.lootlearn.presentation.screens.authchoice.googlesignin.SignIn
 import com.example.lootlearn.presentation.screens.signup.SignUpScreen
 
 @Composable
-fun Navigation(googleAuthUiClient: GoogleAuthUiClient, state: SignInState) {
+fun Navigation(googleAuthUiClient: GoogleAuthUiClient) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -24,7 +24,7 @@ fun Navigation(googleAuthUiClient: GoogleAuthUiClient, state: SignInState) {
             SplashScreen(navController)
         }
         composable(Screen.AuthChoiceScreen.route) { 
-            AuthChoiceScreen(navController = navController, googleAuthUiClient = googleAuthUiClient, state = state )
+            AuthChoiceScreen(navController = navController, googleAuthUiClient = googleAuthUiClient )
         }
         composable(Screen.LogInScreen.route) { 
             LogInScreen(navController = navController)

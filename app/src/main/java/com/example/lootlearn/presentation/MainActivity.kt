@@ -39,8 +39,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private val signInViewModel: SignInViewModel by viewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +51,9 @@ class MainActivity : ComponentActivity() {
                     color = Color.White
                 ) {
 
-                    Navigation(googleAuthUiClient
-                    , state = signInViewModel.state.collectAsState().value)
+                    Navigation(
+                        googleAuthUiClient
+                    )
 //                    SignUpScreen()
 //                    ForgotPasswordScreen()
 //                    CongratulationScreen()
@@ -62,33 +61,6 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
-        }
-    }
-
-    @Composable
-    private fun handleGoogleSignIn() {
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartIntentSenderForResult(),
-            onResult = { result ->
-                if (result.resultCode == RESULT_OK) {
-                    lifecycleScope.launch {
-                        val signInResult = googleAuthUiClient.signInWithIntent(
-                            intent = result.data ?: return@launch
-                        )
-                        signInViewModel.onSignInResult(signInResult)
-                    }
-                }
-            }
-        )
-
-        // Launch Google Sign-In flow
-        LaunchedEffect(Unit) {
-            val signInIntentSender = googleAuthUiClient.signIn()
-            launcher.launch(
-                IntentSenderRequest.Builder(
-                    signInIntentSender ?: return@LaunchedEffect
-                ).build()
-            )
         }
     }
 }

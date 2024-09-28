@@ -21,6 +21,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,22 +53,50 @@ import kotlinx.coroutines.launch
 fun AuthChoiceScreen(
     signupOrLogin : String = "Log in!",
     navController: NavController,
-    state: SignInState,
     googleAuthUiClient: GoogleAuthUiClient,
     viewModel: SignInViewModel = hiltViewModel()
 ){
 
+    val state = viewModel.state.collectAsState()
     val context = LocalContext.current
-    LaunchedEffect(key1 = state.signInError) {
-        state.signInError?.let { error ->
-            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-        }
-    }
+//    LaunchedEffect(key1 = state.signInError) {
+//        state.signInError?.let { error ->
+//            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+//        }
+//    }
+//
+//    LaunchedEffect(key1 = state.isSignInSuccessful) {
+//        if (state.isSignInSuccessful) {
+//            navController.navigate(Screen.MainFeedScreen.route)
+//            viewModel.resetState()
+//        }
+//    }
 
-    LaunchedEffect(key1 = state.isSignInSuccessful) {
-        if (state.isSignInSuccessful) {
-            navController.navigate(Screen.MainFeedScreen.route)
+//    LaunchedEffect(key1 = state.value.isSignInSuccessful) {
+//        if(state.value.isSignInSuccessful) {
+//            Toast.makeText(
+//                context,
+//                "Sign in successful",
+//                Toast.LENGTH_LONG
+//            ).show()
+//
+//            navController.navigate(Screen.MainFeedScreen.route)
+//            viewModel.resetState()
+//        }
+//    }
+
+    LaunchedEffect(state.value) {
+        if (state.value.isSignInSuccessful) {
+            Toast.makeText(context, "Sign-in successful!", Toast.LENGTH_SHORT).show()
+
+            navController.navigate(Screen.MainFeedScreen.route) {
+//                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                navController.popBackStack()
+            }
+
             viewModel.resetState()
+        } else if (state.value.signInError != null) {
+            Toast.makeText(context, "Sign-in failed: ${state.value.signInError}", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -76,7 +105,6 @@ fun AuthChoiceScreen(
         onResult = { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.let { data ->
-                    // Handle the sign-in result
                     CoroutineScope(Dispatchers.Main).launch {
                         try {
                             val signInResult = googleAuthUiClient.signInWithIntent(data)

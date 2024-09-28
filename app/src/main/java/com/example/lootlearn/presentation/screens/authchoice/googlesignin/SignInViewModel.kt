@@ -1,5 +1,6 @@
 package com.example.lootlearn.presentation.screens.authchoice.googlesignin
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,10 @@ class SignInViewModel @Inject constructor(): ViewModel() {
 
     fun onSignInResult(result: SignInResult) {
         _state.update {
+            val isSuccess = result.data != null
+            val error = result.errorMessage
+
+            Log.d("SignInViewModel", "SignIn success: $isSuccess, error: $error")
             it.copy(
                 isSignInSuccessful = result.data != null,
                 signInError = result.errorMessage
@@ -23,6 +28,7 @@ class SignInViewModel @Inject constructor(): ViewModel() {
     }
 
     fun resetState() {
+        Log.d("SignInViewModel", "Resetting sign-in state.")
         _state.update { SignInState() }
     }
 
