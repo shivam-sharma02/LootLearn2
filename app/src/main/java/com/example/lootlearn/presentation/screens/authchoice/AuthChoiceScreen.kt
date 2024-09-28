@@ -1,5 +1,12 @@
-package com.example.lootlearn.presentation.screens
+package com.example.lootlearn.presentation.screens.authchoice
 
+import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,30 +20,82 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.lootlearn.R
 import com.example.lootlearn.presentation.components.StandardSocialAuthButton
+import com.example.lootlearn.presentation.screens.authchoice.googlesignin.GoogleAuthUiClient
+import com.example.lootlearn.presentation.screens.authchoice.googlesignin.SignInState
+import com.example.lootlearn.presentation.screens.authchoice.googlesignin.SignInViewModel
 import com.example.lootlearn.presentation.ui.theme.AuthScreenPurpleText
 import com.example.lootlearn.presentation.ui.theme.FacebookBackgroundColor
 import com.example.lootlearn.presentation.ui.theme.GoogleTextContentColor
 import com.example.lootlearn.utils.Screen
 import com.example.lootlearn.utils.annotatedLoginSignupString
 import com.example.lootlearn.utils.annotatedPrivacyPolicyString
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun AuthChoiceScreen(
     signupOrLogin : String = "Log in!",
-    navController: NavController
+    navController: NavController,
+    state: SignInState,
+    googleAuthUiClient: GoogleAuthUiClient,
+    viewModel: SignInViewModel = hiltViewModel()
 ){
+
+    val context = LocalContext.current
+    LaunchedEffect(key1 = state.signInError) {
+        state.signInError?.let { error ->
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    LaunchedEffect(key1 = state.isSignInSuccessful) {
+        if (state.isSignInSuccessful) {
+            navController.navigate(Screen.MainFeedScreen.route)
+            viewModel.resetState()
+        }
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { data ->
+                    // Handle the sign-in result
+                    CoroutineScope(Dispatchers.Main).launch {
+                        try {
+                            val signInResult = googleAuthUiClient.signInWithIntent(data)
+                            viewModel.onSignInResult(signInResult)
+                        } catch (e: Exception) {
+                            Log.e("AuthChoiceScreen", "SignIn Error: ${e.message}")
+                            Toast.makeText(context, "Sign-in failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } ?: run {
+                    Log.e("AuthChoiceScreen", "SignIn result data is null")
+                    Toast.makeText(context, "Sign-in result is null", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Log.e("AuthChoiceScreen", "SignIn result code: ${result.resultCode}")
+            }
+        }
+    )
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
@@ -79,6 +138,12 @@ fun AuthChoiceScreen(
             Spacer(modifier = Modifier.height(87.5.dp))
 
             StandardSocialAuthButton(logo = painterResource(id = R.drawable.googlelogo), text = "Continue with Google", backgroundColor = Color.White , textColor = GoogleTextContentColor){
+                CoroutineScope(Dispatchers.Main).launch {
+                    val signInIntentSender = googleAuthUiClient.signIn()
+                    signInIntentSender?.let {
+                        launcher.launch(IntentSenderRequest.Builder(it).build())
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -110,6 +175,7 @@ fun AuthChoiceScreen(
 
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

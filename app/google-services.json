@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "561379998255",
+    "project_id": "lootlearn-7934c",
+    "storage_bucket": "lootlearn-7934c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561379998255:android:62f98b686620b0b05464da",
+        "android_client_info": {
+          "package_name": "com.example.lootlearn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjmnjou_nDnOAWUIHuIjIkcHgQ81vQpZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
