@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">LootLearn</string>
+
+
+    <string name="facebook_app_id">372813119231909</string>
+    <string name="fb_login_protocol_scheme">fb372813119231909</string>
+    <string name="facebook_client_token">52318a8830aba797c2206911925eeac8</string>
 </resources>

@@ -12,20 +12,20 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 @Composable
 fun StandardScaffold(content : @Composable () -> Unit){
-    Scaffold (
-        bottomBar = {
-            BottomAppBar  (
-                modifier = Modifier.fillMaxWidth()
-            ){
-                BottomNavigation (
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    BottomNavigationItem(
-                        selected = ,
-                        onClick = {}
-                    ){
-
-                    }
-                }
-            }
+//    Scaffold (
+//        bottomBar = {
+//            BottomAppBar  (
+//                modifier = Modifier.fillMaxWidth()
+//            ){
+//                BottomNavigation (
+//                    modifier = Modifier.fillMaxWidth()
+//                ){
+//                    BottomNavigationItem(
+//                        selected = ,
+//                        onClick = {}
+//                    ){
+//
+//                    }
+//                }
+//            }
 }
