@@ -96,6 +96,11 @@ dependencies {
 
     implementation ("androidx.compose.material3:material3:1.0.0") // For material design 3 components
     implementation ("androidx.compose.material:material:1.5.0")
+    implementation ("com.facebook.android:facebook-login:16.0.0")
+    implementation ("com.auth0.android:jwtdecode:2.0.2")
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
 
     implementation("com.google.firebase:firebase-auth-ktx:23.0.0")
     implementation("com.google.android.gms:play-services-auth:21.2.0")

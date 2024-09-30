@@ -4,17 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.lootlearn.presentation.screens.authchoice.AuthChoiceScreen
-import com.example.lootlearn.presentation.screens.MainFeedScreen
+import com.example.lootlearn.presentation.screens.authChoices.AuthChoiceScreen
 import com.example.lootlearn.presentation.screens.forgotpassword.ForgotPasswordScreen
 import com.example.lootlearn.presentation.screens.login.LogInScreen
 import com.example.lootlearn.presentation.screens.SplashScreen
-import com.example.lootlearn.presentation.screens.authchoice.googlesignin.GoogleAuthUiClient
-import com.example.lootlearn.presentation.screens.authchoice.googlesignin.SignInState
+import com.example.lootlearn.presentation.screens.authChoices.AuthChoiceViewModel
+import com.example.lootlearn.presentation.screens.authChoices.AuthRepository
+import com.example.lootlearn.presentation.screens.login.LogInViewModel
 import com.example.lootlearn.presentation.screens.signup.SignUpScreen
 
 @Composable
-fun Navigation(googleAuthUiClient: GoogleAuthUiClient) {
+fun Navigation(authChoiceViewModel: AuthChoiceViewModel) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -24,7 +24,7 @@ fun Navigation(googleAuthUiClient: GoogleAuthUiClient) {
             SplashScreen(navController)
         }
         composable(Screen.AuthChoiceScreen.route) { 
-            AuthChoiceScreen(navController = navController, googleAuthUiClient = googleAuthUiClient )
+            AuthChoiceScreen(navController = navController, authChoiceViewModel = authChoiceViewModel)
         }
         composable(Screen.LogInScreen.route) { 
             LogInScreen(navController = navController)
@@ -34,9 +34,6 @@ fun Navigation(googleAuthUiClient: GoogleAuthUiClient) {
         }
         composable(Screen.SignUpScreen.route) {
             SignUpScreen(navController = navController)
-        }
-        composable(Screen.MainFeedScreen.route) {
-            MainFeedScreen(navController = navController)
         }
     }
 }
