@@ -1,4 +1,4 @@
-package com.example.lootlearn.presentation.screens.authchoice.googlesignin
+package com.example.lootlearn.presentation.screens.authChoices.googlesignin
 
 import android.content.Context
 import android.content.Intent

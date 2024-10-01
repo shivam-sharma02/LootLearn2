@@ -24,7 +24,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.lootlearn.R
-import com.example.lootlearn.presentation.screens.authchoice.googlesignin.SignInViewModel
+import com.example.lootlearn.presentation.screens.authChoices.googlesignin.SignInViewModel
 import com.example.lootlearn.presentation.ui.theme.GradientColors
 import com.example.lootlearn.utils.Screen
 import com.example.lootlearn.utils.gradientBrush

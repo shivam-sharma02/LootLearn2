@@ -1,4 +1,4 @@
-package com.example.lootlearn.presentation.screens.authchoice.googlesignin
+package com.example.lootlearn.presentation.screens.authChoices.googlesignin
 
 data class SignInState(
     val isSignInSuccessful : Boolean = false,
