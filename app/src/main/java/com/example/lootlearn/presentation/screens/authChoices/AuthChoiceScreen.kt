@@ -1,6 +1,7 @@
 package com.example.lootlearn.presentation.screens.authChoices
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
@@ -14,8 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.auth0.android.jwt.JWT
 import com.example.lootlearn.R
+import com.example.lootlearn.model.FbLoginModel
 import com.example.lootlearn.presentation.components.StandardSocialAuthButton
 import com.example.lootlearn.presentation.ui.theme.AuthScreenPurpleText
 import com.example.lootlearn.presentation.ui.theme.FacebookBackgroundColor
@@ -47,11 +53,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 fun AuthChoiceScreen(
     signupOrLogin: String = "Log in!",
     navController: NavController,
-    authChoiceViewModel: AuthChoiceViewModel
+    authChoiceViewModel: AuthChoiceViewModel = viewModel()
 ) {
 
     val context = LocalContext.current
     val callbackManager = remember { CallbackManager.Factory.create() }
+//    val isLoading by authChoiceViewModel.fbLoginLoading.observeAsState(false)
+    val fbLoginResponse by authChoiceViewModel.fbLoginResponse.observeAsState()
 
     Box(
         modifier = Modifier
@@ -110,25 +118,43 @@ fun AuthChoiceScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            StandardSocialAuthButton(
-                logo = painterResource(id = R.drawable.facebooklogo),
-                text = "Continue with Facebook",
-                backgroundColor = FacebookBackgroundColor,
-                textColor = Color.White
-            ) {
-                authChoiceViewModel.startFacebookLogin(context, callbackManager)
+//            setFbView(authChoiceViewModel = authChoiceViewModel, context = context, callbackManager = callbackManager, fbLoginResponse = fbLoginResponse!!)
+
+            authChoiceViewModel.fbLoginLoading.let {
+                if (it.value == true) {
+                    CircularProgressIndicator(
+                        color = Color.Red,
+                        strokeWidth = 4.dp
+                    )
+                } else {
+                    StandardSocialAuthButton(
+                        logo = painterResource(id = R.drawable.facebooklogo),
+                        text = "Continue with Facebook",
+                        backgroundColor = FacebookBackgroundColor,
+                        textColor = Color.White
+                    ) {
+                        authChoiceViewModel.startFacebookLogin(context, callbackManager)
+                    }
+                }
+            }
+
+            when(fbLoginResponse) {
+                null -> {}
+                else -> {
+                    Log.e("FB_LOGIN", "LOGIN_SUCCESS")
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            StandardSocialAuthButton(
-                logo = painterResource(id = R.drawable.applelogo),
-                text = "Continue with Apple",
-                backgroundColor = Color.Black,
-                textColor = Color.White
-            ) {}
-
-            Spacer(modifier = Modifier.height(40.dp))
+//            StandardSocialAuthButton(
+//                logo = painterResource(id = R.drawable.applelogo),
+//                text = "Continue with Apple",
+//                backgroundColor = Color.Black,
+//                textColor = Color.White
+//            ) {}
+//
+//            Spacer(modifier = Modifier.height(40.dp))
 
             Image(
                 imageVector = ImageVector.vectorResource(id = R.drawable.orseperator),
@@ -159,6 +185,11 @@ fun AuthChoiceScreen(
 
     }
 }
+
+//@Composable
+//fun setFbView(authChoiceViewModel: AuthChoiceViewModel, context: Context, callbackManager: CallbackManager, fbLoginResponse: FbLoginModel) {
+//
+//}
 
 @Preview(showBackground = true)
 @Composable
