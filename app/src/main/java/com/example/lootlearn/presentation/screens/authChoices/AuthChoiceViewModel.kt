@@ -3,8 +3,6 @@ package com.example.lootlearn.presentation.screens.authChoices
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,14 +17,17 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthChoiceViewModel @Inject constructor(private val repository: AuthRepository): ViewModel() {
+class AuthChoiceViewModel @Inject constructor(private val repository: AuthRepository) :
+    ViewModel() {
 
     private val _fbLoginResponse = MutableLiveData<FbLoginModel>()
     val fbLoginResponse: LiveData<FbLoginModel> = _fbLoginResponse
+
+    private val _fbLoginLoading = MutableLiveData<Boolean>()
+    val fbLoginLoading: LiveData<Boolean> = _fbLoginLoading
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
@@ -54,34 +55,38 @@ class AuthChoiceViewModel @Inject constructor(private val repository: AuthReposi
 
                 @SuppressLint("LogNotTimber")
                 override fun onSuccess(result: LoginResult) {
-                    Log.e("FacebookLogin", "Login Success: ${result.authenticationToken?.token}")
+                    Log.e("FacebookLogin", "Login Success: ${result.accessToken.token}")
 
-                    val token = result.authenticationToken?.token!!
-                    val jwt = JWT(token)
-
-                    val name = jwt.getClaim("name").asString()
-                    val email = jwt.getClaim("email").asString()
-
+                    val token = result.accessToken.token
+//                    val jwt = JWT(token)
+//
+//                    val name = jwt.getClaim("name").asString()
+//                    val email = jwt.getClaim("email").asString()
+                    _fbLoginLoading.value = true
                     val requestBody = FbLoginRequestModel(token = token)
                     fbLogin(requestBody = requestBody)
 
-                    Log.e("FacebookLogin", "Name & Email: $name === $email")
+//                    Log.e("FacebookLogin", "Name & Email: $name === $email")
                 }
             }
         )
     }
 
+    @SuppressLint("LogNotTimber")
     fun fbLogin(requestBody: FbLoginRequestModel) {
-
         viewModelScope.launch {
             try {
                 val response = repository.fbLogin(requestBody)
                 if (response.isSuccessful) {
+                    _fbLoginLoading.value = false
                     _fbLoginResponse.postValue(response.body())
+                    Log.e("FB_LOGIN_RESPONSE", response.body().toString())
                 } else {
+                    _fbLoginLoading.value = false
                     _errorMessage.postValue("Error: ${response.message()}")
                 }
             } catch (e: Exception) {
+                _fbLoginLoading.value = false
                 _errorMessage.postValue("Network Error: ${e.message}")
             }
         }
