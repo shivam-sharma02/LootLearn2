@@ -106,7 +106,9 @@ fun SignUpScreen(
             if (viewModel.checkEmailDatabase(viewModel.emailText.value)){
             Row(
                 horizontalArrangement = Arrangement.Start,
-                modifier = Modifier.width(335.dp).padding(5.dp,5.dp,0.dp,0.dp)
+                modifier = Modifier
+                    .width(335.dp)
+                    .padding(5.dp, 5.dp, 0.dp, 0.dp)
             ) {
                 Text(
                     text = "Email is already taken",
@@ -136,7 +138,9 @@ fun SignUpScreen(
             if (viewModel.checkUserIDDatabase(viewModel.useridText.value)){
                 Row(
                     horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier.width(335.dp).padding(5.dp,5.dp,0.dp,0.dp)
+                    modifier = Modifier
+                        .width(335.dp)
+                        .padding(5.dp, 5.dp, 0.dp, 0.dp)
                 ) {
                     Text(
                         text = "The User ID is already taken, try a new one.",
@@ -180,7 +184,9 @@ fun SignUpScreen(
             if (isFieldFocused && !viewModel.isValidPassword(viewModel.passwordText.value)){
                 Row(
                     horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier.width(335.dp).padding(5.dp,5.dp,0.dp,0.dp)
+                    modifier = Modifier
+                        .width(335.dp)
+                        .padding(5.dp, 5.dp, 0.dp, 0.dp)
                 ) {
                     Text(
                         text = annotatedPasswordHintText(),
@@ -206,7 +212,9 @@ fun SignUpScreen(
             if (viewModel.checkPasswordMatch(viewModel.passwordText.value, viewModel.confirmPasswordText.value)){
                 Row(
                     horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier.width(335.dp).padding(5.dp,5.dp,0.dp,0.dp)
+                    modifier = Modifier
+                        .width(335.dp)
+                        .padding(5.dp, 5.dp, 0.dp, 0.dp)
                 ) {
                     Text(
                         text = "The password you entered does not match.",
@@ -228,7 +236,9 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(signUpandPrivacyTextSpace))
 
             if (!viewModel.checkEmailDatabase(viewModel.emailText.value) && !viewModel.checkUserIDDatabase(viewModel.useridText.value) ){
-                Text(text = annotatedPrivacyPolicyString(), modifier = Modifier.width(315.dp).height(44.dp))
+                Text(text = annotatedPrivacyPolicyString(), modifier = Modifier
+                    .width(315.dp)
+                    .height(44.dp))
             }
 
         }

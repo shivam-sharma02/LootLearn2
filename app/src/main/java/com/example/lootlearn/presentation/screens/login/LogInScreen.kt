@@ -13,8 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -38,6 +42,7 @@ import com.example.lootlearn.R
 import com.example.lootlearn.presentation.components.StandardButton
 import com.example.lootlearn.presentation.components.StandardTextField
 import com.example.lootlearn.presentation.ui.theme.Poppins
+import com.example.lootlearn.presentation.ui.theme.switchTrackColor
 import com.example.lootlearn.utils.Screen
 import com.example.lootlearn.utils.annotatedPrivacyPolicyString
 
@@ -114,24 +119,26 @@ fun LogInScreen(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ){
-//                Switch(
-//                    checked = isEnable,
-//                    onCheckedChange = {
-//                    isEnable = it
-//                },
-//                    colors =  SwitchDefaults.colors(
-////                        checkedThumbColor = Color.Blue,
-//                        uncheckedThumbColor = Color.White,
-////                        checkedTrackColor = Color.Blue,
-//                        uncheckedTrackColor = switchTrackColor,
-//                        disabledCheckedBorderColor = Color.Gray,
-//                        checkedBorderColor = Color.Gray
-//                    ),
-//                    modifier = Modifier,
-//
-//                )
+                Switch(
+                    checked = isEnable,
+                    onCheckedChange = {
+                    isEnable = it
+                },
+                    colors =  SwitchDefaults.colors(
+//                        checkedThumbColor = Color.Blue,
+                        uncheckedThumbColor = Color.White,
+//                        checkedTrackColor = Color.Blue,
+                        uncheckedTrackColor = switchTrackColor,
+                        disabledCheckedBorderColor = Color.Gray,
+                        checkedBorderColor = Color.Gray
+                    ),
+                    modifier = Modifier
+                        .scale(0.6f,0.6f)
+                    ,
 
-                Spacer(modifier = Modifier.width(8.dp))
+                )
+
+                Spacer(modifier = Modifier.width(0.dp))
 
                 Text(text = "Remember me",
                     style = TextStyle(
@@ -141,7 +148,7 @@ fun LogInScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.width(56.dp))
+                Spacer(modifier = Modifier.width(28.dp))
 
                 Text(text = "Forgot Password ?",
                     modifier = Modifier.clickable { navController.navigate(Screen.ForgotPasswordScreen.route) },
@@ -159,7 +166,7 @@ fun LogInScreen(
 
             StandardButton(buttonText = "Log In")
 
-            Spacer(modifier = Modifier.height(119.dp))
+            Spacer(modifier = Modifier.height(82.dp))
 
             Text(text = annotatedPrivacyPolicyString(), modifier = Modifier.width(315.dp).height(44.dp))
 
