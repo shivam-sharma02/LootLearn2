@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,34 +43,39 @@ import com.example.lootlearn.presentation.ui.theme.Poppins
 
 @Preview(showBackground = true)
 @Composable
-fun standardButtonPreview(){
-    StandardButton(buttonText = "Normal button", )
+fun standardButtonPreview() {
+//    StandardButton(buttonText = "Normal button", )
 }
 
 @Composable
 fun StandardButton(
-    buttonText : String,
-//    onClick : () -> Unit
-){
-    Box (
+    buttonText: String,
+    isLoading: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
         modifier = Modifier
             .width(335.dp)
             .height(52.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(ButtonBackground),
         contentAlignment = Alignment.Center
-    ){
-        Text(
-            text = buttonText,
-            Modifier
-                .clickable { }
-            ,
-            style = TextStyle(
-                fontFamily = Poppins,
-                fontWeight = FontWeight(500)
-            ),
-            color = Color.White,
-            fontSize = 16.sp
+    ) {
+
+        if (isLoading) {
+            CircularProgressIndicator(color = Color.White, strokeWidth = 4.dp)
+        } else {
+            Text(
+                text = buttonText,
+                Modifier
+                    .clickable(onClick = onClick),
+                style = TextStyle(
+                    fontFamily = Poppins,
+                    fontWeight = FontWeight(500)
+                ),
+                color = Color.White,
+                fontSize = 16.sp
             )
+        }
     }
 }

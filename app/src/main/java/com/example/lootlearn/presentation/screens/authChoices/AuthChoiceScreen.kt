@@ -60,6 +60,7 @@ fun AuthChoiceScreen(
     val callbackManager = remember { CallbackManager.Factory.create() }
 //    val isLoading by authChoiceViewModel.fbLoginLoading.observeAsState(false)
     val fbLoginResponse by authChoiceViewModel.fbLoginResponse.observeAsState()
+    val fbLoginLoading = authChoiceViewModel.fbLoginLoading.observeAsState()
 
     Box(
         modifier = Modifier
@@ -120,23 +121,31 @@ fun AuthChoiceScreen(
 
 //            setFbView(authChoiceViewModel = authChoiceViewModel, context = context, callbackManager = callbackManager, fbLoginResponse = fbLoginResponse!!)
 
-            authChoiceViewModel.fbLoginLoading.let {
-                if (it.value == true) {
-                    CircularProgressIndicator(
-                        color = Color.Red,
-                        strokeWidth = 4.dp
-                    )
+            Box(modifier = Modifier, contentAlignment = Alignment.Center) {
+                var loadingString = "Continue with Facebook"
+                if (fbLoginLoading.value == true) {
+                    loadingString = "Signing In..."
                 } else {
-                    StandardSocialAuthButton(
-                        logo = painterResource(id = R.drawable.facebooklogo),
-                        text = "Continue with Facebook",
-                        backgroundColor = FacebookBackgroundColor,
-                        textColor = Color.White
-                    ) {
-                        authChoiceViewModel.startFacebookLogin(context, callbackManager)
-                    }
+                    loadingString = "Continue with Facebook"
+                }
+
+                StandardSocialAuthButton(
+                    logo = painterResource(id = R.drawable.facebooklogo),
+                    text = loadingString,
+                    backgroundColor = FacebookBackgroundColor,
+                    textColor = Color.White
+                ) {
+                    authChoiceViewModel.startFacebookLogin(context, callbackManager)
                 }
             }
+
+//            authChoiceViewModel.fbLoginLoading.let {
+//                if (it.value == true) {
+//
+//                } else {
+//
+//                }
+//            }
 
             when(fbLoginResponse) {
                 null -> {}

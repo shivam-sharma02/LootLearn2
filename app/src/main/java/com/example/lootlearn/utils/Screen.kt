@@ -8,5 +8,6 @@ sealed class Screen(val route: String) {
     object ForgotPasswordScreen : Screen("forgot_password_screen")
     object SignUpScreen: Screen("sign_up_screen")
     object MainFeedScreen: Screen("main_feed_screen")
+    object OtpVerificationScreen: Screen("otp_verification_screen")
 
 }

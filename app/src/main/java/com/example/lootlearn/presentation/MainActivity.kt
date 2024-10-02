@@ -13,9 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lootlearn.presentation.components.OtpTextField
-import com.example.lootlearn.presentation.screens.OtpVerificationScreen
 import com.example.lootlearn.presentation.screens.authChoices.AuthChoiceViewModel
 import com.example.lootlearn.presentation.screens.authChoices.AuthRepository
 import com.example.lootlearn.presentation.screens.authChoices.AuthViewModelFactory
@@ -40,7 +38,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize(),
                     color = Color.White
                 ) {
-                    Navigation(authChoiceViewModel)
+                    Navigation(authChoiceViewModel, this)
 //                    SignUpScreen()
 //                    ForgotPasswordScreen()
 //                    CongratulationScreen()

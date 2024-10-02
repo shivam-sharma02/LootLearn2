@@ -1,5 +1,6 @@
 package com.example.lootlearn.presentation.screens
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun MainFeedScreen(
+    context: Context,
     navController: NavController
 ){
     Box(

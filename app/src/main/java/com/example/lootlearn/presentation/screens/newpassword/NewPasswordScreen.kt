@@ -137,7 +137,7 @@ fun NewPasswordScreen(
 
             Spacer(modifier = Modifier.height(132.96.dp))
 
-            StandardButton(buttonText = "Continue")
+            StandardButton(buttonText = "Continue", isLoading = false) {}
         }
 
 

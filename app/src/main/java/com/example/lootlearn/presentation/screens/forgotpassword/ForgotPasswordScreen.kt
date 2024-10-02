@@ -125,7 +125,7 @@ fun ForgotPasswordScreen(
 
             Spacer(modifier = Modifier.height(180.37.dp))
 
-            StandardButton(buttonText = "Continue")
+            StandardButton(buttonText = "Continue", isLoading = false) {}
 
         }
     }

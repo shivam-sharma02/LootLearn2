@@ -76,7 +76,7 @@ fun CongratulationScreen(){
 
             Spacer(modifier = Modifier.height(170.21.dp))
 
-            StandardButton(buttonText = "Log In")
+            StandardButton(buttonText = "Log In", isLoading = false) {}
         }
     }
 }
