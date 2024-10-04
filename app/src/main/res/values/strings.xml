@@ -2,6 +2,8 @@
     <string name="app_name">LootLearn</string>
 
     <string name="web_client_id">561379998255-6sv674ubqksm7pev1fk6gcie5al3g2ba.apps.googleusercontent.com</string>
+<!--    <string name="web_client_id">658867561961-7t3uo2pemkstu3c719sjj52hcni9damh.apps.googleusercontent.com</string>-->
+<!--    <string name="web_client_id">658867561961-8jparj55rsin1nrkk9udjtpclkg9t41c.apps.googleusercontent.com</string>-->
 
     <string name="facebook_app_id">372813119231909</string>
     <string name="fb_login_protocol_scheme">fb372813119231909</string>
