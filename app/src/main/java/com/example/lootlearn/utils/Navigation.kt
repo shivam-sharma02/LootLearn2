@@ -55,8 +55,5 @@ fun Navigation(authChoiceViewModel: AuthChoiceViewModel, googleAuthUiClient: Goo
         composable(Screen.CongratulationScreen.route) {
             CongratulationScreen(navController = navController, context = context)
         }
-        composable(Screen.MainFeedScreen.route){
-            MainFeedScreen(navController = navController)
-        }
     }
 }

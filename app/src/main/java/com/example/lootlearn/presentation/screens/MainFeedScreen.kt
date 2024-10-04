@@ -1,5 +1,6 @@
 package com.example.lootlearn.presentation.screens
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,6 +43,7 @@ import com.example.lootlearn.presentation.ui.theme.verificationText
 fun MainFeedScreen(
     navController: NavController,
 //    userData: UserData?,
+    context : Context
 ){
 
     StandardScaffold(
