@@ -18,10 +18,13 @@ import com.example.lootlearn.presentation.screens.authChoices.AuthRepository
 import com.example.lootlearn.requestModel.LoginRequestModel
 import com.example.lootlearn.requestModel.SignupRequestModel
 import com.example.lootlearn.requestModel.VerifyOTPRequestModel
+import com.example.lootlearn.utils.Consts
 import com.example.lootlearn.utils.Screen
+import com.example.lootlearn.utils.SharedPreferenceHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 
@@ -67,16 +70,14 @@ class VerifyOTPViewModel @Inject constructor(private val repository: AuthReposit
         _fourthText.value = fourthText
     }
 
-    fun checkEmptyFields() {
-        if (firstText.value.isEmpty() || secondText.value.isEmpty() || thirdText.value.isEmpty() || fourthText.value.isEmpty()) {
-            _isEmpty.value = true
-        } else {
-            _isEmpty.value = false
-        }
+    fun checkEmptyFields(otp: String) {
+        _isEmpty.value = otp.isEmpty() || otp.length < 4
     }
 
     @SuppressLint("LogNotTimber")
     fun verifyOTP(requestBody: VerifyOTPRequestModel, navController: NavController, context: Context) {
+        val sharedPreferenceHelper = SharedPreferenceHelper(context)
+
         _verifyOTPLoading.postValue(true)
         viewModelScope.launch {
             try {
@@ -89,17 +90,51 @@ class VerifyOTPViewModel @Inject constructor(private val repository: AuthReposit
                     if (response.body() != null) {
                         if (response.body()!!.code == 200) {
                             Toast.makeText(context, response.body()!!.message!!, Toast.LENGTH_LONG).show()
-                            delay(2000)  // the delay of 3 seconds
-                            navController.navigate(Screen.MainFeedScreen.route)
+
+                            sharedPreferenceHelper.saveString(Consts.TOKEN, response.body()!!.data!!.token!!)
+                            sharedPreferenceHelper.saveString(Consts.ID, response.body()!!.data!!.user!!.Id!!)
+                            sharedPreferenceHelper.saveString(Consts.NAME, response.body()!!.data!!.user!!.name!!)
+                            sharedPreferenceHelper.saveString(Consts.EMAIL, response.body()!!.data!!.user!!.email!!)
+                            sharedPreferenceHelper.saveString(Consts.USERID, response.body()!!.data!!.user!!.userId!!)
+                            sharedPreferenceHelper.saveString(Consts.PASSWORD, response.body()!!.data!!.user!!.password!!)
+                            if (response.body()!!.data!!.user!!.google_id != null) {
+                                sharedPreferenceHelper.saveString(Consts.GOOGLE_ID, response.body()!!.data!!.user!!.google_id!!)
+                            }
+
+                            if (response.body()!!.data!!.user!!.facebook_id != null) {
+                                sharedPreferenceHelper.saveString(Consts.FACEBOOK_ID, response.body()!!.data!!.user!!.facebook_id!!)
+                            }
+
+                            if (response.body()!!.data!!.user!!.image != null) {
+                                sharedPreferenceHelper.saveString(Consts.IMAGE, response.body()!!.data!!.user!!.image!!)
+                            }
+                            sharedPreferenceHelper.saveBool(Consts.IS_VERIFIED, response.body()!!.data!!.user!!.is_verified!!)
+                            sharedPreferenceHelper.saveString(Consts.SIGNUP_USING, response.body()!!.data!!.user!!.signup_using!!)
+                            sharedPreferenceHelper.saveString(Consts.ROLE, response.body()!!.data!!.user!!.role!!)
+                            sharedPreferenceHelper.saveBool(Consts.IS_ACTIVE, response.body()!!.data!!.user!!.is_active!!)
+
+                            delay(1000)
+
+                            if (sharedPreferenceHelper.getString(Consts.OTP_VERIFY_FROM) == "signup") {
+                                navController.navigate(Screen.MainFeedScreen.route) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            } else {
+                                navController.navigate(Screen.NewPasswordScreen.route)
+                            }
                         }
                     }
                 } else {
                     _verifyOTPLoading.postValue(false)
-                    _errorMessage.postValue("Error: ${response.message()}")
+                    val obj = JSONObject(response.errorBody()!!.string())
+                    Log.e("ERROR", obj.getString("message"))
+                    _errorMessage.postValue("Error: ${obj.getString("message")}")
+                    Toast.makeText(context, obj.getString("message"), Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 _verifyOTPLoading.postValue(false)
                 _errorMessage.postValue("Network Error: ${e.message}")
+                Toast.makeText(context, "Something Went Wrong!", Toast.LENGTH_LONG).show()
             }
         }
     }

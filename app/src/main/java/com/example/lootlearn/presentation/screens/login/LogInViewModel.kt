@@ -12,14 +12,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.lootlearn.model.LoginModel
-import com.example.lootlearn.model.SignupModel
 import com.example.lootlearn.presentation.screens.authChoices.AuthRepository
 import com.example.lootlearn.requestModel.LoginRequestModel
-import com.example.lootlearn.requestModel.SignupRequestModel
 import com.example.lootlearn.utils.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 
@@ -88,17 +87,27 @@ class LogInViewModel @Inject constructor(private val repository: AuthRepository)
                     if (response.body() != null) {
                         if (response.body()!!.code == 200) {
                             Toast.makeText(context, response.body()!!.message!!, Toast.LENGTH_LONG).show()
-                            delay(2000)  // the delay of 3 seconds
-                            navController.navigate(Screen.MainFeedScreen.route)
+                            delay(1000)  // the delay of 3 seconds
+                            navController.navigate(Screen.MainFeedScreen.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
                         }
                     }
                 } else {
                     _loginLoading.postValue(false)
-                    _errorMessage.postValue("Error: ${response.message()}")
+                    try {
+                        val obj = JSONObject(response.errorBody()!!.string())
+                        Log.e("ERROR", obj.getString("message"))
+                        _errorMessage.postValue("Error: ${obj.getString("message")}")
+                        Toast.makeText(context, obj.getString("message"), Toast.LENGTH_LONG).show()
+                    } catch (t: Throwable) {
+                        Log.e("ERROR", "Could not parse malformed JSON: \"${response.errorBody()!!.string()}\"")
+                    }
                 }
             } catch (e: Exception) {
                 _loginLoading.postValue(false)
                 _errorMessage.postValue("Network Error: ${e.message}")
+                Toast.makeText(context, "Something Went Wrong!", Toast.LENGTH_LONG).show()
             }
         }
     }

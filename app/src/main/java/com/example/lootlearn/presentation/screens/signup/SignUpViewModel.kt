@@ -18,10 +18,13 @@ import com.example.lootlearn.model.SignupModel
 import com.example.lootlearn.presentation.screens.authChoices.AuthRepository
 import com.example.lootlearn.requestModel.FbLoginRequestModel
 import com.example.lootlearn.requestModel.SignupRequestModel
+import com.example.lootlearn.utils.Consts
 import com.example.lootlearn.utils.Screen
+import com.example.lootlearn.utils.SharedPreferenceHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -161,6 +164,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
 
     @SuppressLint("LogNotTimber")
     fun signup(requestBody: SignupRequestModel, navController: NavController, context: Context) {
+        val sharedPreferenceHelper = SharedPreferenceHelper(context)
         _signupLoading.postValue(true)
         viewModelScope.launch {
             try {
@@ -173,17 +177,23 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
                     if (response.body() != null) {
                         if (response.body()!!.code == 200) {
                             Toast.makeText(context, response.body()!!.message!!, Toast.LENGTH_LONG).show()
-                            delay(2000)  // the delay of 3 seconds
+                            sharedPreferenceHelper.saveString(Consts.EMAIL, response.body()!!.data!!.user!!.email!!)
+                            sharedPreferenceHelper.saveString(Consts.OTP_VERIFY_FROM, "signup")
+                            delay(1000)
                             navController.navigate(Screen.OtpVerificationScreen.route)
                         }
                     }
                 } else {
                     _signupLoading.postValue(false)
-                    _errorMessage.postValue("Error: ${response.message()}")
+                    val obj = JSONObject(response.errorBody()!!.string())
+                    Log.e("ERROR", obj.getString("message"))
+                    _errorMessage.postValue("Error: ${obj.getString("message")}")
+                    Toast.makeText(context, obj.getString("message"), Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 _signupLoading.postValue(false)
                 _errorMessage.postValue("Network Error: ${e.message}")
+                Toast.makeText(context, "Something Went Wrong!", Toast.LENGTH_LONG).show()
             }
         }
     }

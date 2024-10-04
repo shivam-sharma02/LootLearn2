@@ -41,13 +41,16 @@ import com.example.lootlearn.presentation.components.StandardSocialAuthButton
 import com.example.lootlearn.presentation.ui.theme.AuthScreenPurpleText
 import com.example.lootlearn.presentation.ui.theme.FacebookBackgroundColor
 import com.example.lootlearn.presentation.ui.theme.GoogleTextContentColor
+import com.example.lootlearn.utils.Consts
 import com.example.lootlearn.utils.Screen
+import com.example.lootlearn.utils.SharedPreferenceHelper
 import com.example.lootlearn.utils.annotatedLoginSignupString
 import com.example.lootlearn.utils.annotatedPrivacyPolicyString
 import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun AuthChoiceScreen(
@@ -58,8 +61,6 @@ fun AuthChoiceScreen(
 
     val context = LocalContext.current
     val callbackManager = remember { CallbackManager.Factory.create() }
-//    val isLoading by authChoiceViewModel.fbLoginLoading.observeAsState(false)
-    val fbLoginResponse by authChoiceViewModel.fbLoginResponse.observeAsState()
     val fbLoginLoading = authChoiceViewModel.fbLoginLoading.observeAsState()
 
     Box(
@@ -135,7 +136,7 @@ fun AuthChoiceScreen(
                     backgroundColor = FacebookBackgroundColor,
                     textColor = Color.White
                 ) {
-                    authChoiceViewModel.startFacebookLogin(context, callbackManager)
+                    authChoiceViewModel.startFacebookLogin(context, callbackManager, navController)
                 }
             }
 
@@ -146,13 +147,6 @@ fun AuthChoiceScreen(
 //
 //                }
 //            }
-
-            when(fbLoginResponse) {
-                null -> {}
-                else -> {
-                    Log.e("FB_LOGIN", "LOGIN_SUCCESS")
-                }
-            }
 
             Spacer(modifier = Modifier.height(20.dp))
 

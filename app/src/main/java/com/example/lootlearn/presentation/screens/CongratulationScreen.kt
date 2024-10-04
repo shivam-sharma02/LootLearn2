@@ -1,5 +1,6 @@
 package com.example.lootlearn.presentation.screens
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,37 +21,46 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.lootlearn.R
 import com.example.lootlearn.presentation.components.StandardButton
 import com.example.lootlearn.presentation.ui.theme.Poppins
 import com.example.lootlearn.presentation.ui.theme.forgotPasswordColor
 import com.example.lootlearn.presentation.ui.theme.otpTextColor
+import com.example.lootlearn.utils.Screen
 
 
 @Composable
-fun CongratulationScreen(){
+fun CongratulationScreen(
+    navController: NavController,
+    context: Context,
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .statusBarsPadding(),
         contentAlignment = Alignment.Center
-    ){
+    ) {
 
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(0.dp, 183.dp, 0.dp, 0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-        ){
-            Image(imageVector = ImageVector.vectorResource(id = R.drawable.congratulationimage), contentDescription = "Congratulation image")
+        ) {
+            Image(
+                imageVector = ImageVector.vectorResource(
+                    id = R.drawable.congratulationimage
+                ), contentDescription = "Congratulation image"
+            )
 
             Spacer(modifier = Modifier.height(34.36.dp))
 
-            Text(text = "Congratulations !",
+            Text(
+                text = "Congratulations !",
                 style = TextStyle(
                     fontFamily = Poppins,
                     fontWeight = FontWeight(600),
@@ -61,7 +71,8 @@ fun CongratulationScreen(){
             )
             Spacer(modifier = Modifier.height(17.18.dp))
 
-            Text(text = "Your password has been updated successfully",
+            Text(
+                text = "Your password has been updated successfully",
                 style = TextStyle(
                     fontFamily = Poppins,
                     fontWeight = FontWeight(400),
@@ -76,13 +87,17 @@ fun CongratulationScreen(){
 
             Spacer(modifier = Modifier.height(170.21.dp))
 
-            StandardButton(buttonText = "Log In", isLoading = false) {}
+            StandardButton(buttonText = "Log In", isLoading = false) {
+                navController.navigate(Screen.LogInScreen.route){
+                    popUpTo(0) { inclusive = true }
+                }
+            }
         }
     }
 }
 
-@Preview
-@Composable
-fun CongratulationsPreview(){
-    CongratulationScreen()
-}
+//@Preview
+//@Composable
+//fun CongratulationsPreview() {
+//    CongratulationScreen()
+//}

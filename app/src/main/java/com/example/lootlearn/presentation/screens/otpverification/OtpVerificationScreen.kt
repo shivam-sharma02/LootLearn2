@@ -24,8 +24,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,29 +52,37 @@ import com.example.lootlearn.presentation.ui.theme.errorRed
 import com.example.lootlearn.presentation.ui.theme.verificationText
 import com.example.lootlearn.requestModel.LoginRequestModel
 import com.example.lootlearn.requestModel.VerifyOTPRequestModel
+import com.example.lootlearn.utils.Consts
+import com.example.lootlearn.utils.SharedPreferenceHelper
 import com.example.lootlearn.utils.annotatedResendString
+import kotlinx.coroutines.delay
 
 @Composable
 fun OtpVerificationScreen(
     navController: NavController,
     context: Context,
     verifyOTPViewModel: VerifyOTPViewModel = hiltViewModel()
-){
+) {
 
+    val sharedPreferenceHelper = SharedPreferenceHelper(context)
+//    Log.e("FROM", sharedPreferenceHelper.getString(Consts.OTP_VERIFY_FROM))
     val verifyOTPLoading = verifyOTPViewModel.verifyOTPLoading.observeAsState(initial = false)
     var otpValue by remember { mutableStateOf("") }
+    var timeLeftInSeconds by remember { mutableIntStateOf(60) } // Set initial countdown time
+    var isTimerRunning by remember { mutableStateOf(true) }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(0.dp, 16.dp)
-        .statusBarsPadding()
-    ){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(0.dp, 16.dp)
+            .statusBarsPadding()
+    ) {
 
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp, 0.dp, 0.dp, 0.dp)
-        ){
+        ) {
             val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
             Image(
@@ -93,15 +103,29 @@ fun OtpVerificationScreen(
                 .fillMaxSize()
                 .padding(0.dp, 132.dp, 0.dp, 0.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Image(imageVector = ImageVector.vectorResource(id = R.drawable.verificationtext), contentDescription = "Verification text" , modifier = Modifier
-                .width(272.dp)
-                .height(98.dp))
+        ) {
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.verificationtext), contentDescription = "Verification text", modifier = Modifier
+                    .width(272.dp)
+                    .height(98.dp)
+            )
 
             Spacer(modifier = Modifier.height(60.dp))
 
+            LaunchedEffect(isTimerRunning) {
+                if (isTimerRunning) {
+                    while (timeLeftInSeconds > 0) {
+                        delay(1000L)
+                        timeLeftInSeconds -= 1
+                    }
+                    isTimerRunning = false // Reset timer after completion
+                } else {
+                    timeLeftInSeconds = 60
+                }
+            }
+
             Text(
-                text = "1:30",
+                text = "$timeLeftInSeconds",
                 style = TextStyle(
                     fontFamily = Poppins,
                     fontSize = 24.sp,
@@ -110,7 +134,6 @@ fun OtpVerificationScreen(
                 color = verificationText,
                 modifier = Modifier
                     .width(45.dp),
-
             )
 
             Spacer(modifier = Modifier.height(60.dp))
@@ -140,7 +163,7 @@ fun OtpVerificationScreen(
                         Row(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(16.dp,0.dp,0.dp,0.dp)
+                            modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 0.dp)
                         ) {
                             repeat(4) { index ->
                                 val char = when {
@@ -185,7 +208,7 @@ fun OtpVerificationScreen(
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier
                         .width(335.dp)
-                        .padding(5.dp, 5.dp, 0.dp, 0.dp)
+                        .padding(25.dp, 5.dp, 0.dp, 0.dp)
                 ) {
                     Text(
                         text = "Please enter valid OTP!",
@@ -202,18 +225,22 @@ fun OtpVerificationScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            Text(text = annotatedResendString(), modifier = Modifier
-                .width(327.dp)
-                .height(24.dp),
-                textAlign = TextAlign.Center)
+            Text(
+                text = annotatedResendString(), modifier = Modifier.clickable {
+                    
+                }
+                    .width(327.dp)
+                    .height(24.dp),
+                textAlign = TextAlign.Center,
+            )
 
             Spacer(modifier = Modifier.height(125.dp))
 
             StandardButton(buttonText = "Continue", isLoading = verifyOTPLoading.value) {
-                verifyOTPViewModel.checkEmptyFields()
+                verifyOTPViewModel.checkEmptyFields(otpValue)
 
                 if (!verifyOTPViewModel.isEmpty.value) {
-                    val requestBody = VerifyOTPRequestModel(email = "", otp = otpValue)
+                    val requestBody = VerifyOTPRequestModel(email = sharedPreferenceHelper.getString(Consts.EMAIL), otp = otpValue)
                     verifyOTPViewModel.verifyOTP(requestBody = requestBody, navController = navController, context = context)
                 }
             }
