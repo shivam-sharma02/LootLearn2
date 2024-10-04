@@ -15,12 +15,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lootlearn.presentation.components.OtpTextField
+import com.example.lootlearn.presentation.screens.MainFeedScreen
 import com.example.lootlearn.presentation.screens.OtpVerificationScreen
 import com.example.lootlearn.presentation.screens.authChoices.AuthChoiceViewModel
 import com.example.lootlearn.presentation.screens.authChoices.AuthRepository
 import com.example.lootlearn.presentation.screens.authChoices.AuthViewModelFactory
+import com.example.lootlearn.presentation.screens.authChoices.googlesignin.GoogleAuthUiClient
 import com.example.lootlearn.presentation.ui.theme.LootLearnTheme
 import com.example.lootlearn.utils.Navigation
+import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -29,6 +32,13 @@ class MainActivity : ComponentActivity() {
 
     private val repository = AuthRepository()
     val authChoiceViewModel: AuthChoiceViewModel by viewModels { AuthViewModelFactory(repository) }
+
+    private val googleAuthUiClient by lazy {
+        GoogleAuthUiClient(
+            context = applicationContext,
+            oneTapClient = Identity.getSignInClient(applicationContext)
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,11 +50,12 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize(),
                     color = Color.White
                 ) {
-                    Navigation(authChoiceViewModel)
+                    Navigation(authChoiceViewModel, googleAuthUiClient)
 //                    SignUpScreen()
 //                    ForgotPasswordScreen()
 //                    CongratulationScreen()
 //                    OtpVerificationScreen()
+//                    MainFeedScreen()
                 }
 
             }

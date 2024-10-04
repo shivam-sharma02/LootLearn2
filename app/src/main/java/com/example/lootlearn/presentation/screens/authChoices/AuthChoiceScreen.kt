@@ -1,9 +1,14 @@
 package com.example.lootlearn.presentation.screens.authChoices
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,6 +24,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -38,6 +44,8 @@ import com.auth0.android.jwt.JWT
 import com.example.lootlearn.R
 import com.example.lootlearn.model.FbLoginModel
 import com.example.lootlearn.presentation.components.StandardSocialAuthButton
+import com.example.lootlearn.presentation.screens.authChoices.googlesignin.GoogleAuthUiClient
+import com.example.lootlearn.presentation.screens.authChoices.googlesignin.SignInViewModel
 import com.example.lootlearn.presentation.ui.theme.AuthScreenPurpleText
 import com.example.lootlearn.presentation.ui.theme.FacebookBackgroundColor
 import com.example.lootlearn.presentation.ui.theme.GoogleTextContentColor
@@ -48,18 +56,64 @@ import com.facebook.*
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun AuthChoiceScreen(
     signupOrLogin: String = "Log in!",
     navController: NavController,
-    authChoiceViewModel: AuthChoiceViewModel = viewModel()
+    googleAuthUiClient : GoogleAuthUiClient,
+    authChoiceViewModel: AuthChoiceViewModel = viewModel(),
+    viewModel: SignInViewModel = hiltViewModel()
 ) {
+
+    val state = viewModel.state.collectAsState()
 
     val context = LocalContext.current
     val callbackManager = remember { CallbackManager.Factory.create() }
-//    val isLoading by authChoiceViewModel.fbLoginLoading.observeAsState(false)
+//    val isLoading by aut0hChoiceViewModel.fbLoginLoading.observeAsState(false)
     val fbLoginResponse by authChoiceViewModel.fbLoginResponse.observeAsState()
+
+    LaunchedEffect(state.value) {
+        if (state.value.isSignInSuccessful) {
+            Toast.makeText(context, "Sign-in successful!", Toast.LENGTH_SHORT).show()
+
+            navController.navigate(Screen.MainFeedScreen.route) {
+//                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                navController.popBackStack()
+            }
+
+            viewModel.resetState()
+        } else if (state.value.signInError != null) {
+            Toast.makeText(context, "Sign-in failed: ${state.value.signInError}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { data ->
+                    CoroutineScope(Dispatchers.Main).launch {
+                        try {
+                            val signInResult = googleAuthUiClient.signInWithIntent(data)
+                            viewModel.onSignInResult(signInResult)
+                        } catch (e: Exception) {
+                            Log.e("AuthChoiceScreen", "SignIn Error: ${e.message}")
+                            Toast.makeText(context, "Sign-in failed", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } ?: run {
+                    Log.e("AuthChoiceScreen", "SignIn result data is null")
+                    Toast.makeText(context, "Sign-in result is null", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Log.e("AuthChoiceScreen", "SignIn result code: ${result.resultCode}")
+            }
+        }
+    )
 
     Box(
         modifier = Modifier
@@ -114,6 +168,12 @@ fun AuthChoiceScreen(
                 backgroundColor = Color.White,
                 textColor = GoogleTextContentColor
             ) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val signInIntentSender = googleAuthUiClient.signIn()
+                    signInIntentSender?.let {
+                        launcher.launch(IntentSenderRequest.Builder(it).build())
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
