@@ -1,5 +1,6 @@
 package com.example.lootlearn.presentation.screens.login
 
+import android.content.Context
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +22,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,15 +44,21 @@ import com.example.lootlearn.R
 import com.example.lootlearn.presentation.components.StandardButton
 import com.example.lootlearn.presentation.components.StandardTextField
 import com.example.lootlearn.presentation.ui.theme.Poppins
+import com.example.lootlearn.presentation.ui.theme.errorRed
 import com.example.lootlearn.presentation.ui.theme.switchTrackColor
+import com.example.lootlearn.requestModel.LoginRequestModel
+import com.example.lootlearn.requestModel.SignupRequestModel
 import com.example.lootlearn.utils.Screen
 import com.example.lootlearn.utils.annotatedPrivacyPolicyString
 
 @Composable
 fun LogInScreen(
     navController: NavController,
+    context: Context,
     viewModel: LogInViewModel = hiltViewModel()
 ){
+
+    val loginLoading = viewModel.loginLoading.observeAsState(initial = false)
 
     var isEnable by remember {
         mutableStateOf(false)
@@ -93,8 +101,29 @@ fun LogInScreen(
                 hint = "Email/User ID",
                 onValueChange = {
                     viewModel.setUserIdText(it)
+                    viewModel.checkEmptyFields()
                 }
             )
+
+            if (viewModel.isUseridEmpty.value) {
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .width(335.dp)
+                        .padding(5.dp, 5.dp, 0.dp, 0.dp)
+                ) {
+                    Text(
+                        text = "Email/User ID is empty",
+                        style = TextStyle(
+                            fontFamily = Poppins,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight(400)
+                        ),
+                        color = errorRed,
+                        modifier = Modifier,
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -107,9 +136,30 @@ fun LogInScreen(
                 },
                 onValueChange = {
                     viewModel.setPasswordText(it)
+                    viewModel.checkEmptyFields()
                 },
                 keyboardType = KeyboardType.Password
             )
+
+            if (viewModel.isPasswordEmpty.value) {
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .width(335.dp)
+                        .padding(5.dp, 5.dp, 0.dp, 0.dp)
+                ) {
+                    Text(
+                        text = "Password is empty",
+                        style = TextStyle(
+                            fontFamily = Poppins,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight(400)
+                        ),
+                        color = errorRed,
+                        modifier = Modifier,
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(60.dp))
 
@@ -164,7 +214,14 @@ fun LogInScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            StandardButton(buttonText = "Log In")
+            StandardButton(buttonText = "Log In", isLoading = loginLoading.value) {
+                viewModel.checkEmptyFields()
+
+                if (viewModel.useridText.value.isNotEmpty() && viewModel.passwordText.value.isNotEmpty()) {
+                    val requestBody = LoginRequestModel(email_or_userid = viewModel.useridText.value, password = viewModel.passwordText.value)
+                    viewModel.login(requestBody = requestBody, navController = navController, context = context)
+                }
+            }
 
             Spacer(modifier = Modifier.height(82.dp))
 

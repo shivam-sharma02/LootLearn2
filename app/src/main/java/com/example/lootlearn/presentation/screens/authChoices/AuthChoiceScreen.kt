@@ -49,7 +49,9 @@ import com.example.lootlearn.presentation.screens.authChoices.googlesignin.SignI
 import com.example.lootlearn.presentation.ui.theme.AuthScreenPurpleText
 import com.example.lootlearn.presentation.ui.theme.FacebookBackgroundColor
 import com.example.lootlearn.presentation.ui.theme.GoogleTextContentColor
+import com.example.lootlearn.utils.Consts
 import com.example.lootlearn.utils.Screen
+import com.example.lootlearn.utils.SharedPreferenceHelper
 import com.example.lootlearn.utils.annotatedLoginSignupString
 import com.example.lootlearn.utils.annotatedPrivacyPolicyString
 import com.facebook.*
@@ -59,6 +61,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 @Composable
 fun AuthChoiceScreen(
@@ -73,6 +76,7 @@ fun AuthChoiceScreen(
 
     val context = LocalContext.current
     val callbackManager = remember { CallbackManager.Factory.create() }
+    val fbLoginLoading = authChoiceViewModel.fbLoginLoading.observeAsState()
 //    val isLoading by aut0hChoiceViewModel.fbLoginLoading.observeAsState(false)
     val fbLoginResponse by authChoiceViewModel.fbLoginResponse.observeAsState()
 
@@ -180,30 +184,31 @@ fun AuthChoiceScreen(
 
 //            setFbView(authChoiceViewModel = authChoiceViewModel, context = context, callbackManager = callbackManager, fbLoginResponse = fbLoginResponse!!)
 
-            authChoiceViewModel.fbLoginLoading.let {
-                if (it.value == true) {
-                    CircularProgressIndicator(
-                        color = Color.Red,
-                        strokeWidth = 4.dp
-                    )
+            Box(modifier = Modifier, contentAlignment = Alignment.Center) {
+                var loadingString = "Continue with Facebook"
+                if (fbLoginLoading.value == true) {
+                    loadingString = "Signing In..."
                 } else {
-                    StandardSocialAuthButton(
-                        logo = painterResource(id = R.drawable.facebooklogo),
-                        text = "Continue with Facebook",
-                        backgroundColor = FacebookBackgroundColor,
-                        textColor = Color.White
-                    ) {
-                        authChoiceViewModel.startFacebookLogin(context, callbackManager)
-                    }
+                    loadingString = "Continue with Facebook"
+                }
+
+                StandardSocialAuthButton(
+                    logo = painterResource(id = R.drawable.facebooklogo),
+                    text = loadingString,
+                    backgroundColor = FacebookBackgroundColor,
+                    textColor = Color.White
+                ) {
+                    authChoiceViewModel.startFacebookLogin(context, callbackManager, navController)
                 }
             }
 
-            when(fbLoginResponse) {
-                null -> {}
-                else -> {
-                    Log.e("FB_LOGIN", "LOGIN_SUCCESS")
-                }
-            }
+//            authChoiceViewModel.fbLoginLoading.let {
+//                if (it.value == true) {
+//
+//                } else {
+//
+//                }
+//            }
 
             Spacer(modifier = Modifier.height(20.dp))
 

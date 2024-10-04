@@ -1,6 +1,7 @@
 package com.example.lootlearn.presentation.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,17 +27,20 @@ import coil.size.Size
 import com.example.lootlearn.R
 import com.example.lootlearn.presentation.screens.authChoices.googlesignin.SignInViewModel
 import com.example.lootlearn.presentation.ui.theme.GradientColors
+import com.example.lootlearn.utils.Consts
 import com.example.lootlearn.utils.Screen
+import com.example.lootlearn.utils.SharedPreferenceHelper
 import com.example.lootlearn.utils.gradientBrush
 import kotlinx.coroutines.delay
 
 @SuppressLint("ResourceType")
 @Composable
 fun SplashScreen(
-    navController: NavController
+    navController: NavController,
+    context: Context
 ) {
 
-
+    val sharedPreferenceHelper = SharedPreferenceHelper(context)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -87,7 +91,12 @@ fun SplashScreen(
                 delay(2200)
 
                     navController.popBackStack()
-                    navController.navigate(Screen.AuthChoiceScreen.route)
+                    if (sharedPreferenceHelper.getString(Consts.TOKEN).isNotEmpty()) {
+                        navController.navigate(Screen.MainFeedScreen.route)
+                    } else {
+                        navController.navigate(Screen.AuthChoiceScreen.route)
+                    }
+
 
             }
 
